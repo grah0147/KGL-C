@@ -1,0 +1,288 @@
+﻿/* Kigali Connect (kgl-c) — Driver App Styles */
+
+/* Theme Configurations using CSS Variables — same brand system as client/company,
+   but tuned high-contrast: a driver is glancing at this mid-shift, not browsing. */
+    .theme-black-red {
+      /* "Dusk" — deep forest-ink base, burnt-clay accent */
+      --bg-main: #0f1c17;
+      --bg-sidebar: #172922;
+      --text-main: #f4eee2;
+      --text-muted: #93ac9f;
+      --accent: #d97a3e;       /* Clay, boosted for legibility at a glance */
+      --accent-hover: #e8935c;
+      --card-bg: #1f352c;
+      --border-color: #2c4238;
+    }
+
+    .theme-white-blue {
+      /* "Mist" — cool daylight theme for bright-cab readability */
+      --bg-main: #eef2ef;
+      --bg-sidebar: #ffffff;
+      --text-main: #16261f;
+      --text-muted: #4a5f56;
+      --accent: #b85a2a;
+      --accent-hover: #9c4a20;
+      --card-bg: #ffffff;
+      --border-color: #dce6e0;
+    }
+
+    .theme-green-gold {
+      /* "Kivu" — teal-black base, savanna-gold accent */
+      --bg-main: #0b2420;
+      --bg-sidebar: #0f2f29;
+      --text-main: #f2f7f0;
+      --text-muted: #9cc2b4;
+      --accent: #e0a83c;
+      --accent-hover: #f2bd54;
+      --card-bg: #123830;
+      --border-color: #1c473d;
+    }
+
+    /* Type system — shared with the client and company apps */
+    :root {
+      --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+      --font-body: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    /* Apply variables globally */
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 600; }
+
+    .route-divider {
+      position: relative;
+      height: 1px;
+      margin: 16px 0;
+      background-image: linear-gradient(to right, var(--border-color) 55%, transparent 0%);
+      background-size: 10px 1px;
+      background-repeat: repeat-x;
+    }
+    .route-divider::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      transform: translateY(-50%);
+    }
+    .sidebar {
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+    }
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+    }
+    .btn-accent {
+      background-color: var(--accent);
+      color: #fff;
+    }
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+    }
+    .text-accent {
+      color: var(--accent);
+    }
+    .text-muted {
+      color: var(--text-muted);
+    }
+    .border-custom {
+      border-color: var(--border-color);
+    }
+
+    /* Map height fix */
+    #map {
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+    }
+
+    /* Scanner laser animation */
+    @keyframes scan {
+      0%, 100% { top: 0%; }
+      50% { top: 100%; }
+    }
+    .scanner-laser {
+      animation: scan 3s linear infinite;
+    }
+
+    /* Cinematic Masked Entry Layout */
+    .intro-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bg-main);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .cinematic-stage {
+        position: relative;
+        width: 750px;
+        height: 220px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .text-layer {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .layer-initial {
+        z-index: 2;
+        animation: maskWipeOut 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .brand-headline-large {
+        font-family: var(--font-display);
+        font-size: 4.2rem;
+        font-weight: 600;
+        font-style: italic;
+        letter-spacing: -0.5px;
+    }
+
+    .brand-headline-large span { color: var(--accent); }
+
+    .layer-reveal {
+        z-index: 1;
+        animation: maskWipeIn 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .loader-box-large {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .classic-ring-large {
+        width: 180px;
+        height: 180px;
+        border: 8px solid rgba(255, 255, 255, 0.1);
+        border-top: 8px solid var(--accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        position: absolute;
+    }
+
+    .traced-text-large {
+        font-size: 2.2rem;
+        font-weight: 800;
+        letter-spacing: 3px;
+        z-index: 3;
+        text-transform: lowercase;
+    }
+
+    .bus-mask-track {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    .animated-bus-giant {
+        font-size: 7.5rem;
+        position: absolute;
+        top: calc(50% - 7rem); 
+        left: -200px;
+        transform: scaleX(-1);
+        animation: busPassCinematic 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes busPassCinematic {
+        0% { left: -250px; }
+        100% { left: 850px; }
+    }
+
+    @keyframes maskWipeOut {
+        0% { clip-path: inset(0 0 0 0); }
+        25% { clip-path: inset(0 0 0 0); }
+        65% { clip-path: inset(0 0 0 100%); }
+        100% { clip-path: inset(0 0 0 100%); opacity: 0; }
+    }
+
+    @keyframes maskWipeIn {
+        0% { clip-path: inset(0 100% 0 0); opacity: 0; }
+        30% { clip-path: inset(0 100% 0 0); opacity: 1; }
+        70% { clip-path: inset(0 0 0 0); opacity: 1; }
+        100% { clip-path: inset(0 0 0 0); opacity: 1; }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* --- Entry Tab Bar (Login / Signup) --- */
+    .entry-tab-bar {
+        position: relative;
+        display: flex;
+        background: rgba(255,255,255,0.05);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .entry-tab {
+        flex: 1;
+        padding: 8px 0;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        transition: color 0.25s;
+        position: relative;
+        z-index: 1;
+    }
+    .entry-tab.active {
+        color: #fff;
+    }
+    .entry-tab-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 100%;
+        background: var(--accent);
+        border-radius: 10px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 0;
+    }
+    .entry-switch-link,
+    #entry-switch-to-signup,
+    #entry-switch-to-login {
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .entry-switch-link:hover,
+    #entry-switch-to-signup:hover,
+    #entry-switch-to-login:hover {
+        color: var(--accent);
+    }

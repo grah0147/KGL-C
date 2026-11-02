@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kigali Connect — Client</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,600&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" crossorigin="" />
+    <link rel="stylesheet" href="client.css" />
+
+</head>
+<body>
+<!-- 0. CINEMATIC ENTRY ANIMATION STAGE -->
+    <div id="intro-stage">
+        <div class="cinematic-stage">
+            <div class="layer-initial">KiGaLi-Connect</div>
+            <div class="layer-reveal">
+                <div class="classic-ring-large"></div>
+                <span>kgl-c</span>
+            </div>
+            <div class="bus-mask-track">
+                <div class="animated-bus-giant">🚌</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. LOGIN / SIGNUP ENTRY MODAL -->
+    <div id="username-entry-overlay" class="entry-overlay">
+        <div class="entry-card">
+            <h2 id="entry-heading">Welcome</h2>
+            <div id="entry-sub-label" class="sub-label">Sign in or create an account to book rides.</div>
+
+            <div class="entry-lang-selector">
+                <button class="entry-lang-btn active" id="lang-btn-en" onclick="setEntryLanguage('en')">English</button>
+                <button class="entry-lang-btn" id="lang-btn-rw" onclick="setEntryLanguage('rw')">Kinyarwanda</button>
+                <button class="entry-lang-btn" id="lang-btn-fr" onclick="setEntryLanguage('fr')">Français</button>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="entry-tab-bar">
+                <button class="entry-tab active" id="entry-tab-login" onclick="switchEntryTab('login')" data-i18n="entry_tab_login">Login</button>
+                <button class="entry-tab" id="entry-tab-signup" onclick="switchEntryTab('signup')" data-i18n="entry_tab_signup">Sign Up</button>
+                <div class="entry-tab-indicator" id="entry-tab-indicator"></div>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div id="entry-login-form" class="entry-form-panel">
+                <div class="entry-input-group">
+                    <label id="entry-phone-label" for="entry-phone">Phone Number</label>
+                    <input type="tel" id="entry-phone" placeholder="e.g. 0788123456" autocomplete="tel">
+                </div>
+                <div class="entry-input-group">
+                    <label id="entry-pin-label" for="entry-pin">PIN</label>
+                    <input type="password" id="entry-pin" placeholder="••••" maxlength="8" autocomplete="current-password">
+                </div>
+                <button class="wide-btn" id="entry-login-btn" onclick="handleClientLogin()" data-i18n="entry_login_btn">Login</button>
+                <p class="entry-switch-link" id="entry-switch-to-signup" onclick="switchEntryTab('signup')" data-i18n="entry_switch_signup">Don't have an account? Sign up</p>
+            </div>
+
+            <!-- SIGNUP FORM -->
+            <div id="entry-signup-form" class="entry-form-panel" style="display:none">
+                <div class="entry-input-group">
+                    <label id="entry-reg-phone-label" for="entry-reg-phone">Phone Number</label>
+                    <input type="tel" id="entry-reg-phone" placeholder="e.g. 0788123456" autocomplete="tel">
+                </div>
+                <div class="entry-input-group">
+                    <label id="entry-reg-fname-label" for="entry-reg-fname">First Name</label>
+                    <input type="text" id="entry-reg-fname" placeholder="e.g. Jean" autocomplete="given-name">
+                </div>
+                <div class="entry-input-group">
+                    <label id="entry-reg-lname-label" for="entry-reg-lname">Last Name</label>
+                    <input type="text" id="entry-reg-lname" placeholder="e.g. Uwimana" autocomplete="family-name">
+                </div>
+                <div class="entry-input-group">
+                    <label id="entry-reg-email-label" for="entry-reg-email">Email</label>
+                    <input type="email" id="entry-reg-email" placeholder="e.g. jean@mail.rw" autocomplete="email">
+                </div>
+                <div class="entry-input-group">
+                    <label id="entry-reg-pin-label" for="entry-reg-pin">Choose PIN</label>
+                    <input type="password" id="entry-reg-pin" placeholder="4-8 digits" maxlength="8" autocomplete="new-password">
+                </div>
+                <button class="wide-btn" id="entry-signup-btn" onclick="handleClientSignup()" data-i18n="entry_signup_btn">Create Account</button>
+                <p class="entry-switch-link" id="entry-switch-to-login" onclick="switchEntryTab('login')" data-i18n="entry_switch_login">Already have an account? Login</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div class="app-container app-blurred" id="core-app-wrapper">
+        
+        <aside class="sidebar">
+            <div class="nav-group">
+                <button class="nav-btn active" onclick="switchScreen('home', this)">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label" data-i18n="nav_home">Home</span>
+                </button>
+                <button class="nav-btn" onclick="switchScreen('schedule', this)">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label" data-i18n="nav_schedule">Schedule</span>
+                </button>
+                <button id="notifications-nav-btn" class="nav-btn" onclick="switchScreen('notifications', this)">
+                    <span class="badge" id="notification-badge"></span>
+                    <span class="nav-icon">🔔</span>
+                    <span class="nav-label" data-i18n="nav_notifications">Notifications</span>
+                </button>
+                <button class="nav-btn" onclick="switchScreen('settings', this)">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label" data-i18n="nav_settings">Settings</span>
+                </button>
+            </div>
+
+            <button class="theme-btn" onclick="cycleTheme()">
+                <span class="theme-icon">🎨</span>
+                <span class="theme-label">Theme</span>
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <section id="screen-home" class="screen active">
+                <h1 class="home-hero" data-i18n="hero_title">Ready to travel</h1>
+
+                <div class="home-layout">
+                    <div class="booking-tab">
+                        <div class="tab-title" data-i18n="routing_engine">LIVE ROUTING ENGINE</div>
+
+                        <div class="form-group">
+                            <label style="color: #4cd964; font-weight: bold;" data-i18n="gps_auth">📍 Live Location Authorization</label>
+                            <input type="text" id="user-gps-status" value="Requesting browser permission..." disabled style="opacity: 0.8; font-style: italic;">
+                        </div>
+
+                        <!-- DEPARTURE LOCATION SELECTOR -->
+                        <div class="form-group">
+                            <label for="bus-departure" data-i18n="dep_label">Departure Location</label>
+                            <select id="bus-departure" onchange="handleLocationChange('departure')">
+                                <option value="my_location" selected data-i18n="my_location_opt">📍 My Location (Live GPS)</option>
+                                <optgroup label="🚩 Major Bus Park Terminals" class="opt-terminals">
+                                    <!-- Dynamic -->
+                                </optgroup>
+                                <optgroup label="🚏 Local Street Bus Stops" class="opt-stops">
+                                    <!-- Dynamic -->
+                                </optgroup>
+                                <option value="custom_coords" data-i18n="coords_opt">🌐 Coordinates (Input Lat/Lng)</option>
+                            </select>
+                        </div>
+                        <div id="dep-coords-box" class="coords-box">
+                            <input type="number" id="dep-lat" placeholder="Lat (-1.9545)" step="any">
+                            <input type="number" id="dep-lng" placeholder="Lng (30.0922)" step="any">
+                        </div>
+
+                        <!-- DESTINATION LOCATION SELECTOR -->
+                        <div class="form-group">
+                            <label for="bus-destination" data-i18n="dest_label">Destination Terminal / Stop</label>
+                            <select id="bus-destination" onchange="handleLocationChange('destination')">
+                                <option value="my_location" data-i18n="my_location_opt">📍 My Location (Live GPS)</option>
+                                <optgroup label="🚩 Major Bus Park Terminals" class="opt-terminals">
+                                    <!-- Dynamic -->
+                                </optgroup>
+                                <optgroup label="🚏 Local Street Bus Stops" class="opt-stops">
+                                    <!-- Dynamic -->
+                                </optgroup>
+                                <option value="custom_coords" data-i18n="coords_opt">🌐 Coordinates (Input Lat/Lng)</option>
+                            </select>
+                        </div>
+                        <div id="dest-coords-box" class="coords-box">
+                            <input type="number" id="dest-lat" placeholder="Lat (-1.5034)" step="any">
+                            <input type="number" id="dest-lng" placeholder="Lng (29.6341)" step="any">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bus-date" data-i18n="date_label">Date</label>
+                            <input type="date" id="bus-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="bus-time" data-i18n="time_label">Time</label>
+                            <input type="time" id="bus-time">
+                        </div>
+
+                        <!-- ROUTE BUTTON -->
+                        <button class="wide-btn" onclick="initiateRouteSearch()" data-i18n="route_btn">Map Multi-Path Route</button>
+
+                        <!-- GENERATED TICKET QR PANEL -->
+                        <div class="qr-ticket-container" id="ticket-qr-panel">
+                            <p style="font-size: 11px; font-weight: bold; color: var(--text-color);" data-i18n="boarding_pass_title">BOARDING PASS GENERATED</p>
+                            <button class="qr-trigger-btn" style="margin: 10px auto;" onclick="openLargeQRFromActive()">
+                                <img src="" id="qr-image-placeholder" alt="QR Loading...">
+                            </button>
+                            <p id="qr-meta-text" style="font-size: 10px; color: var(--text-muted); margin-top: 4px;"></p>
+                        </div>
+                    </div>
+
+                    <div class="map-panel">
+                        <div id="leaflet-map"></div>
+                        <div class="map-controls-bar">
+                            <div class="map-control-title" id="park-display-label">Bus Stations</div>
+                            <div class="map-nav-actions">
+                                <button class="map-nav-btn" onclick="navigateParks(-1)" title="Previous station">&lt;</button>
+                                <button class="map-nav-btn" onclick="navigateParks(1)" title="Next station">&gt;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="screen-schedule" class="screen">
+                <h1 data-i18n="schedule_title">Travel Schedule</h1>
+                <p data-i18n="schedule_desc">Plan ahead and organize your upcoming trips cleanly.</p>
+                <button class="wide-btn" onclick="toggleForm()" data-i18n="add_activity_btn">Add a travel activity</button>
+
+                <div class="form-container" id="activity-form">
+                    <div class="form-group">
+                        <label for="activity-name" data-i18n="activity_name">Activity Name</label>
+                        <input type="text" id="activity-name" value="Bus to Musanze">
+                    </div>
+                    <div class="form-group">
+                        <label for="activity-date" data-i18n="date_label">Date</label>
+                        <input type="date" id="activity-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="activity-time" data-i18n="time_label">Time</label>
+                        <input type="time" id="activity-time">
+                    </div>
+                    <button class="wide-btn" onclick="scheduleActivity()" data-i18n="save_activity_btn">Save Activity</button>
+                </div>
+            </section>
+
+            <section id="screen-notifications" class="screen">
+                <h1 data-i18n="notifications_title">Notifications</h1>
+                <p data-i18n="notifications_desc">Your saved tickets and transit warnings are collected here.</p>
+                <div class="notifications-wrapper" id="notifications-display-area">
+                    <p style="color: var(--text-muted); margin-top: 20px; grid-column: 1/-1;" data-i18n="no_saved_tickets">You have no saved tickets yet.</p>
+                </div>
+            </section>
+
+            <section id="screen-settings" class="screen">
+                <h1 data-i18n="settings_title">App Settings</h1>
+                <p data-i18n="settings_desc">Customize your profile, configure preferences, and manage your UI layout options.</p>
+                <div class="form-container show" style="margin-top: 30px; max-width: 450px; margin-left: auto; margin-right: auto;">
+                    <div class="form-group">
+                        <label for="language-select" data-i18n="lang_label" style="font-weight: bold; font-size: 12px; margin-bottom: 8px;">Select System Language</label>
+                        <select id="language-select" onchange="switchLanguage(this.value)" style="padding: 12px; font-weight: 600;">
+                            <option value="en" selected>English (EN)</option>
+                            <option value="rw">Kinyarwanda (RW)</option>
+                            <option value="fr">Français (FR)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 2. BUS COMPANY SELECTION MODAL -->
+    <div id="bus-modal-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="color: var(--text-color); margin-bottom: 6px;" data-i18n="choose_company_title">🚌 Choose Bus Company</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;" data-i18n="choose_company_sub">Select an available bus operator for your chosen route</p>
+            <div id="bus-companies-list">
+                <!-- Spawns company buttons dynamically -->
+            </div>
+            <button class="wide-btn" style="background-color: var(--input-bg); color: var(--text-color); margin-top: 10px;" onclick="closeBusModal()" data-i18n="cancel_btn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- 3. COMBINED INTEGRATED CHECKOUT & YUTONG SEAT PICKER MODAL -->
+    <div id="paywall-modal-overlay" class="modal-overlay">
+        <div class="modal-card wide-checkout">
+            
+            <!-- LEFT PANEL: INTEGRATED YUTONG ECOFLEET SEAT SELECTION -->
+            <div class="checkout-left-panel">
+                <h4 style="color: var(--text-color); font-size: 13px; margin-bottom: 4px;" data-i18n="seat_map_title">💺 Yutong EcoFleet Bus Map</h4>
+                <p style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;" data-i18n="seat_map_sub">Select your preferred seat below</p>
+
+                <div class="bus-chassis">
+                    <div class="bus-cockpit">
+                        <span data-i18n="driver_lbl">🚘 Driver</span>
+                        <span data-i18n="door_lbl">🚪 Door</span>
+                    </div>
+
+                    <!-- Dynamic Yutong EcoFleet Seat Map -->
+                    <div id="yutong-seat-map"></div>
+                </div>
+
+                <div class="seat-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--input-bg); border: 1px solid var(--border-color);"></div> <span data-i18n="legend_available">Available</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--accent-color);"></div> <span data-i18n="legend_selected">Selected</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #3a3a3c; opacity: 0.5;"></div> <span data-i18n="legend_booked">Booked</span></div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: PAYMENT DETAILS & MOMO INTEGRATION -->
+            <div class="checkout-right-panel">
+                <div>
+                    <div class="momo-banner">MTN MoMo API Payment Gate</div>
+                    <h3 style="color: var(--text-color); margin-bottom: 10px;" data-i18n="complete_res_title">Complete Reservation</h3>
+
+                    <div class="paywall-details" id="paywall-summary-text">
+                        <!-- Summary stashed here -->
+                    </div>
+
+                    <div class="form-group" style="text-align: left; margin-top: 10px;">
+                        <label for="momo-phone" style="color: var(--text-color);" data-i18n="momo_phone_lbl">MTN MoMo Phone Number</label>
+                        <input type="tel" id="momo-phone" placeholder="e.g. 0788123456" value="0788250000" style="padding: 10px; font-weight: bold;">
+                    </div>
+                </div>
+
+                <div>
+                    <button class="wide-btn" id="momo-pay-btn" style="background-color: #ffcc00; color: #000; font-weight: 800;" onclick="executeMomoPayment()" data-i18n="pay_momo_btn">
+                        Pay with MTN MoMo
+                    </button>
+                    <button class="wide-btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 6px;" onclick="closePaywallModal()" data-i18n="cancel_btn">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PERSISTENT QR CODE ENLARGEMENT MODAL OVERLAY -->
+    <div id="qr-modal-overlay" class="qr-overlay-modal" onclick="closeLargeQR()">
+        <div class="qr-modal-card" onclick="event.stopPropagation()">
+            <h3 id="modal-ticket-id">🎫 Ticket ID #000000</h3>
+            <h4 data-i18n="boarding_pass_title">BOARDING PASS GENERATED</h4>
+            <img src="" id="modal-qr-img" class="qr-large-display" alt="Loading QR...">
+            <div class="qr-modal-details" id="modal-ticket-details">
+                <!-- Inner itinerary details -->
+            </div>
+            <div class="qr-modal-dismiss-tip" style="font-size: 11px; color: var(--text-muted);" data-i18n="click_outside">Tap anywhere outside to close</div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet Routing Machine Plugin JS -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+
+    <script src="client.js"></script>
+
+</body>
+</html>
