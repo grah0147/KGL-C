@@ -1,6 +1,6 @@
 // Kigali Connect (kgl-c) — Driver App Logic (API-Integrated)
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = window.location.origin;
 
 // Auth helpers
 function getAuthToken() { return sessionStorage.getItem('kglc_token'); }
