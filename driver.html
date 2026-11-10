@@ -5,109 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kigali Connect — Driver</title>
     <link rel="stylesheet" href="/driver.css">
-    <style>
-        body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; }
-        .hidden { display: none !important; }
-        #entry-modal {
-            position: fixed; inset: 0; background: rgba(15,23,42,0.95);
-            display: flex; align-items: center; justify-content: center; z-index: 100;
-        }
-        .entry-card {
-            background: #1e293b; border-radius: 16px; padding: 2rem; width: 90%; max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        .entry-card h2 { margin-top: 0; color: #38bdf8; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; color: #94a3b8; }
-        .form-group input, .form-group select {
-            width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #334155;
-            background: #0f172a; color: #e2e8f0; font-size: 1rem;
-        }
-        .wide-btn {
-            width: 100%; padding: 0.8rem; border: none; border-radius: 8px;
-            background: #38bdf8; color: #0f172a; font-weight: 600; cursor: pointer; margin-top: 0.5rem;
-        }
-        .wide-btn:hover { background: #7dd3fc; }
-        .entry-tab-bar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .entry-tab {
-            flex: 1; padding: 0.6rem; border: 1px solid #334155; background: transparent;
-            color: #94a3b8; border-radius: 8px; cursor: pointer;
-        }
-        .entry-tab.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
-        .switch-link { text-align: center; margin-top: 1rem; color: #38bdf8; cursor: pointer; font-size: 0.9rem; }
-        #main-app { display: none; height: 100vh; }
-    </style>
 </head>
 <body>
-
-    <!-- ENTRY / LOGIN MODAL -->
-    <div id="entry-modal">
-        <div class="entry-card">
-            <h2 id="lang-entry-title">Driver Access</h2>
-            <p id="lang-entry-subtitle" style="color:#94a3b8;margin-top:-0.5rem;">Sign in or register to access the driver dashboard</p>
-
-            <div class="entry-tab-bar">
-                <button class="entry-tab active" id="entry-tab-login">Login</button>
-                <button class="entry-tab" id="entry-tab-signup">Sign Up</button>
-            </div>
-
-            <!-- LOGIN FORM -->
-            <div id="entry-login-form">
-                <div class="form-group">
-                    <label id="lang-label-plate">Plate Number</label>
-                    <input type="text" id="entryPlate" placeholder="e.g. RAD 123 A">
-                </div>
-                <div class="form-group">
-                    <label id="lang-label-code">Entry Code</label>
-                    <input type="text" id="entryCode" placeholder="Entry code">
-                </div>
-                <button class="wide-btn" id="lang-btn-access">Access Dashboard</button>
-                <p class="switch-link" id="entry-switch-to-signup">Don't have an account? Sign up</p>
-            </div>
-
-            <!-- SIGNUP FORM -->
-            <div id="entry-signup-form" class="hidden">
-                <div class="form-group">
-                    <label id="lang-label-company">Bus Company</label>
-                    <select id="entryCompany">
-                        <option value="">-- Select Company --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label id="lang-label-fname">First Name</label>
-                    <input type="text" id="entryFname">
-                </div>
-                <div class="form-group">
-                    <label id="lang-label-lname">Last Name</label>
-                    <input type="text" id="entryLname">
-                </div>
-                <div class="form-group">
-                    <label id="lang-label-phone">Phone Number</label>
-                    <input type="tel" id="entryPhone">
-                </div>
-                <div class="form-group">
-                    <label id="lang-label-license">License Number</label>
-                    <input type="text" id="entryLicense">
-                </div>
-                <div class="form-group">
-                    <label id="lang-label-pin">Choose PIN</label>
-                    <input type="password" id="entryPin" maxlength="8">
-                </div>
-                <button class="wide-btn" id="lang-btn-signup">Create Account</button>
-                <p class="switch-link" id="entry-switch-to-login">Already have an account? Login</p>
-            </div>
+    <div id="app-root">
+        <div style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:system-ui;color:#94a3b8;">
+            Loading Driver App...
         </div>
     </div>
-
-    <!-- MAIN APP (hidden until login) -->
-    <div id="main-app">
-        <div style="padding:2rem;text-align:center;">
-            <h1>Driver Dashboard</h1>
-            <p>You are logged in. Full UI will appear here once the JS fully initializes.</p>
-            <div id="driver-schedule-display"></div>
-        </div>
-    </div>
-
     <script src="/driver.js"></script>
 </body>
 </html>
