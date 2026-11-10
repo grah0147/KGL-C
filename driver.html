@@ -21,7 +21,7 @@
         .form-group label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; color: #94a3b8; }
         .form-group input, .form-group select {
             width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #334155;
-            background: #0f172a; color: #e2e8f0; font-size: 1rem;
+            background: #0f172a; color: #e2e8f0; font-size: 1rem; box-sizing: border-box;
         }
         .wide-btn {
             width: 100%; padding: 0.8rem; border: none; border-radius: 8px;
@@ -35,7 +35,6 @@
         }
         .entry-tab.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
         .switch-link { text-align: center; margin-top: 1rem; color: #38bdf8; cursor: pointer; font-size: 0.9rem; }
-        #main-app { display: none; height: 100vh; }
     </style>
 </head>
 <body>
@@ -47,8 +46,8 @@
             <p id="lang-entry-subtitle" style="color:#94a3b8;margin-top:-0.5rem;">Sign in or register to access the driver dashboard</p>
 
             <div class="entry-tab-bar">
-                <button class="entry-tab active" id="entry-tab-login">Login</button>
-                <button class="entry-tab" id="entry-tab-signup">Sign Up</button>
+                <button class="entry-tab active" id="entry-tab-login" onclick="switchEntryTab('login')">Login</button>
+                <button class="entry-tab" id="entry-tab-signup" onclick="switchEntryTab('signup')">Sign Up</button>
             </div>
 
             <!-- LOGIN FORM -->
@@ -61,8 +60,8 @@
                     <label id="lang-label-code">Entry Code</label>
                     <input type="text" id="entryCode" placeholder="Entry code">
                 </div>
-                <button class="wide-btn" id="lang-btn-access">Access Dashboard</button>
-                <p class="switch-link" id="entry-switch-to-signup">Don't have an account? Sign up</p>
+                <button class="wide-btn" id="lang-btn-access" onclick="handleDriverLogin(event)">Access Dashboard</button>
+                <p class="switch-link" id="entry-switch-to-signup" onclick="switchEntryTab('signup')">Don't have an account? Sign up</p>
             </div>
 
             <!-- SIGNUP FORM -->
@@ -93,20 +92,32 @@
                     <label id="lang-label-pin">Choose PIN</label>
                     <input type="password" id="entryPin" maxlength="8">
                 </div>
-                <button class="wide-btn" id="lang-btn-signup">Create Account</button>
-                <p class="switch-link" id="entry-switch-to-login">Already have an account? Login</p>
+                <button class="wide-btn" id="lang-btn-signup" onclick="handleDriverSignup(event)">Create Account</button>
+                <p class="switch-link" id="entry-switch-to-login" onclick="switchEntryTab('login')">Already have an account? Login</p>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP (hidden until login) -->
-    <div id="main-app">
-        <div style="padding:2rem;text-align:center;">
-            <h1>Driver Dashboard</h1>
-            <p>You are logged in. Full UI will appear here once the JS fully initializes.</p>
-            <div id="driver-schedule-display"></div>
-        </div>
-    </div>
+    <script>
+        function switchEntryTab(tab) {
+            const loginForm = document.getElementById('entry-login-form');
+            const signupForm = document.getElementById('entry-signup-form');
+            const loginTab = document.getElementById('entry-tab-login');
+            const signupTab = document.getElementById('entry-tab-signup');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                loginTab.classList.remove('active');
+                signupTab.classList.add('active');
+            }
+        }
+    </script>
 
     <script src="/driver.js"></script>
 </body>
